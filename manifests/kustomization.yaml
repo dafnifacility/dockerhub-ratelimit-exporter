@@ -6,4 +6,4 @@ resources:
   - rules.yaml
 images:
   - name: ghcr.io/dafnifacility/dockerhub-ratelimit-exporter
-    newTag: v0.1.0
+    newTag: main

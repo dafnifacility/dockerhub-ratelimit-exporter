@@ -4,29 +4,15 @@ metadata:
   name: update-engine-rules
 spec:
   groups:
-    - name: update-monitoring
+    - name: dhrl-monitoring
       rules:
-        - alert: FlatcarNodeNotCheckingForUpdates
+        - alert: HostRunningOutOfDockerhubPulls
           annotations:
-            description: Flatcar node {{ $labels.node }} has not checked for updates for > 1hour
-            message: Update engine may be broken
+            description: Node {{ $labels.node }} has less than 30% of its docker pulls remaining
+            message: Consider using other registries
             severity_level: warning
-            operating_system: flatcar_linux
-            subsystem: update_engine
           expr: |
             max(time()-flatcar_linux_update_engine_last_checked_time_s) by (node)>3600
-          for: 1m
-          labels:
-            severity: warning
-        - alert: FlatcarNodeUpdateEngineReportingErrorEvent
-          annotations:
-            description: Flatcar node {{ $labels.node }} is in the update error state
-            message: Update engine may be broken
-            severity_level: warning
-            operating_system: flatcar_linux
-            subsystem: update_engine
-          expr: |
-            sum(flatcar_linux_update_engine_status{op="REPORTING_ERROR_EVENT"}) by (node)==1
           for: 1m
           labels:
             severity: warning

@@ -15,9 +15,7 @@ spec:
         prometheus.io/port: "26756"
     spec:
       containers:
-        - command:
-            - /bin/ue-exporter
-          env:
+        - env:
             - name: UPDATE_AGENT_NODE
               valueFrom:
                 fieldRef:
