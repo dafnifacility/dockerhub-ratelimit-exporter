@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine AS gobuild
+FROM golang:1.18 AS gobuild
 WORKDIR /work
 COPY . .
 RUN go build -o /work/ratelimit-exporter ./cmd/ratelimit-exporter
