@@ -1,10 +1,8 @@
-FROM golang:1-alpine AS gobuild
-ENV GOPROXY https://proxy.golang.org
+FROM golang:1.18-alpine AS gobuild
 WORKDIR /work
 COPY . .
-RUN apk -U add git build-base && make ratelimit-exporter
+RUN make ratelimit-exporter
 
-FROM alpine:latest
-COPY --from=gobuild /work/ratelimit-exporter /usr/local/bin/ratelimit-exporter
-# Git is needed because this'll get called as a CI job from Gitlab
-ENTRYPOINT ["/usr/local/bin/ratelimit-exporter"]
+FROM gcr.io/distroless/static
+COPY --from=gobuild /work/ratelimit-exporter /bin/ratelimit-exporter
+ENTRYPOINT ["/bin/ratelimit-exporter"]
