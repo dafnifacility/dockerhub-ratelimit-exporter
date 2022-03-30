@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: update-agent-engine-exporter
+  name: dockerhub-ratelimit-exporter
 spec:
   selector:
     matchLabels:
-      app: flatcar-linux-ue-exporter
+      app: dockerhub-ratelimit-exporter
   template:
     metadata:
       labels:
-        app: flatcar-linux-ue-exporter
+        app: dockerhub-ratelimit-exporter
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "26756"
@@ -28,7 +28,7 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.namespace
-          image: ghcr.io/dafnifacility/flatcar-linux-ue-exporter:main
+          image: ghcr.io/dafnifacility/dockerhub-ratelimit-exporter:main
           imagePullPolicy: IfNotPresent
           name: exporter
           resources:
@@ -39,24 +39,12 @@ spec:
               cpu: 100m
               memory: 512Mi
           securityContext:
-            runAsUser: 0
+            runAsUser: 65532
             readOnlyRootFilesystem: true
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
-          volumeMounts:
-            - mountPath: /var/run/dbus
-              name: var-run-dbus
-            - mountPath: /etc/flatcar
-              name: etc-flatcar
-              readOnly: true
-            - mountPath: /usr/share/flatcar
-              name: usr-share-flatcar
-              readOnly: true
-            - mountPath: /etc/os-release
-              name: etc-os-release
-              readOnly: true
           ports:
-            - containerPort: 26756
+            - containerPort: 55123
               name: http-prom
       dnsPolicy: ClusterFirst
       restartPolicy: Always
@@ -66,23 +54,6 @@ spec:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
           operator: Exists
-      volumes:
-        - hostPath:
-            path: /var/run/dbus
-            type: ""
-          name: var-run-dbus
-        - hostPath:
-            path: /etc/flatcar
-            type: ""
-          name: etc-flatcar
-        - hostPath:
-            path: /usr/share/flatcar
-            type: ""
-          name: usr-share-flatcar
-        - hostPath:
-            path: /etc/os-release
-            type: ""
-          name: etc-os-release
   updateStrategy:
     rollingUpdate:
       maxSurge: 0
