@@ -12,4 +12,4 @@ spec:
           targetLabel: node
   selector:
     matchLabels:
-      app: dockerhub_ratelimit_exporter
+      app: dockerhub-ratelimit-exporter

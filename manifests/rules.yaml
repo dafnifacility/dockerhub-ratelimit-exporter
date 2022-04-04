@@ -8,11 +8,11 @@ spec:
       rules:
         - alert: HostRunningOutOfDockerhubPulls
           annotations:
-            description: Node {{ $labels.node }} has less than 30% of its docker pulls remaining
+            description: Node {{$labels.node}} via {{ $labels.identity }} has less than 30% of its docker pulls remaining
             message: Consider using other registries
             severity_level: warning
           expr: |
-            max(time()-flatcar_linux_update_engine_last_checked_time_s) by (node)>3600
-          for: 1m
+            min(dockerhub_imagepull_remaining/dockerhub_imagepull_limit) by (node,identity)<0.3
+          for: 5m
           labels:
             severity: warning
