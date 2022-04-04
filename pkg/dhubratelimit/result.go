@@ -29,7 +29,7 @@ func (r *InnerResult) GetLimit() int {
 }
 
 func (r *InnerResult) GetRemaining() int {
-	return r.PullLimit
+	return r.PullRemaining
 }
 
 func (r *InnerResult) GetWindow() int {
