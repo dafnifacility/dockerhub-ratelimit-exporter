@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func ICanHazIP(af AddressFamily) (ip net.IP, err error) {
@@ -50,6 +52,7 @@ func GenericIPService(af AddressFamily, domain string, afSubdomains map[AddressF
 	if ip == nil {
 		return ip, fmt.Errorf("unable to parse IP address: %s - len=%d", bout, len(ip))
 	} else {
+		log.WithField("ip", ip).Debug("got IP from generic IP get source")
 		return ip, nil
 	}
 }

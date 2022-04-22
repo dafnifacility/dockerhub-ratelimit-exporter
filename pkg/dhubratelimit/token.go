@@ -10,6 +10,7 @@ const (
 	headerLimitRemaining = "RateLimit-Remaining"
 	headerLimitLimit     = "RateLimit-Limit"
 	headerLimitResets    = "RateLimit-Reset"
+	headerLimitSource    = "docker-ratelimit-source"
 )
 
 type authToken struct {

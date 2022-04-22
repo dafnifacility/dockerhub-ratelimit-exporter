@@ -83,14 +83,6 @@ func (rlc *Checker) IdentityString() string {
 	}
 }
 
-// func (rlc *Checker) registryImageLimitRequest() *http.Request {
-// 	req, err := http.NewRequest(http.MethodHead, repoURL, nil)
-// 	if err != nil {
-// 		panic("failed to generate request from static data")
-// 	}
-// 	return req
-// }
-
 func (rlc *Checker) getAuthToken(ctx context.Context) (at authToken, err error) {
 	if rlc.token != nil && !rlc.token.ExpiresSoon() {
 		// If we already have an unexpired token, return that instead of hammering dockerhub
@@ -130,7 +122,6 @@ func (rlc *Checker) Check(ctx context.Context) (lim Result, err error) {
 		return
 	}
 	tok.ApplyTo(req.Header)
-	// FIXME: This is inconsistent on dualstack hosts, the IP address retrieved at the start might not necessarily be the same as the one we get back
 	hres, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
@@ -147,10 +138,14 @@ func (rlc *Checker) Check(ctx context.Context) (lim Result, err error) {
 		res.PullLimit, window = splitRatelimitHeader(ll)
 	}
 	res.Window = time.Duration(window * int(time.Second))
-
+	var rlsrcip net.IP
+	if lsrc := hres.Header.Get(headerLimitSource); lsrc != "" {
+		rlsrcip = net.ParseIP(lsrc)
+	}
 	log.WithFields(log.Fields{
 		"ratelimit-remaining": res.PullRemaining,
 		"ratelimit-limit":     res.PullLimit,
+		"ratelimit-source":    rlsrcip,
 		"window":              res.Window,
 	}).Info("updated ratelimit from docker.io")
 	if rlc.HasCredentials() {
@@ -159,10 +154,20 @@ func (rlc *Checker) Check(ctx context.Context) (lim Result, err error) {
 			Username:    rlc.username,
 		}, nil
 	} else {
-		return &UnauthResult{
-			InnerResult: res,
-			ipAddress:   rlc.IPAddress(extip.IPv4),
-		}, nil
+		if rlsrcip != nil {
+			rlc.cacheip = &rlsrcip
+			log.Debug("using IP-src from response header, this is good")
+			return &UnauthResult{
+				InnerResult: res,
+				ipAddress:   rlsrcip,
+			}, nil
+		} else {
+			log.Warn("no IP ratelimit source header, using checker - this may not be consistent")
+			return &UnauthResult{
+				InnerResult: res,
+				ipAddress:   rlc.IPAddress(extip.IPv4),
+			}, nil
+		}
 	}
 }
 
