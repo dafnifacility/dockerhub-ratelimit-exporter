@@ -1,0 +1,157 @@
+_type: export
+__export_format: 4
+__export_date: 2022-04-22T14:43:03.529Z
+__export_source: insomnia.desktop.app:v2022.2.1
+resources:
+  - _id: req_e803f0fa9afb40f79d5f889444064f0a
+    parentId: wrk_7e298088309f49afaf59b3b7533429a6
+    modified: 1650638029127
+    created: 1650634992808
+    url: https://auth.docker.io/token
+    name: Get Auth
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_7c437ef4552e4e9ebe0deed5df8e34e3
+        name: scope
+        value: repository:{{ _.image.name }}:{{ _.image.tag }}:pull
+        description: ""
+        disabled: false
+      - id: pair_4012042ba04c4674b79dc0a581b2dba7
+        name: service
+        value: "{{ _.registry_auth_host }}"
+        description: ""
+    headers: []
+    authentication: {}
+    metaSortKey: -1650635045275
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_7e298088309f49afaf59b3b7533429a6
+    parentId: null
+    modified: 1650634985256
+    created: 1650634985256
+    name: Docker Hub Ratelimit
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_f02ef96d8df54aa4a24d17323e91df20
+    parentId: wrk_7e298088309f49afaf59b3b7533429a6
+    modified: 1650638031933
+    created: 1650635045225
+    url: https://{{ _.registry_host }}/v2/{{ _.image.name }}/{{ _.image.tag
+      }}/manifests/latest
+    name: Get Manifest
+    description: ""
+    method: HEAD
+    body: {}
+    parameters:
+      - id: pair_7a218bfb13174496aa2885324fc537d0
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers:
+      - id: pair_8664b114132444ad80ba7620d3f8c73c
+        name: ""
+        value: ""
+        description: ""
+      - id: pair_c10f9783b8864c71827612da25b2f81b
+        name: ""
+        value: ""
+        description: ""
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_e803f0fa9afb40f79d5f889444064f0a',
+        'b64::JC50b2tlbg==::46b', 'when-expired', 300 %}"
+    metaSortKey: -1650635045225
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_c0a5e5bbbe009df3a9d02c5720854ef8d10465cc
+    parentId: wrk_7e298088309f49afaf59b3b7533429a6
+    modified: 1650636454451
+    created: 1650634985269
+    name: Base Environment
+    data:
+      image:
+        name: ratelimitpreview
+        tag: test
+      registry_host: registry-1.docker.io
+      registry_auth_host: registry.docker.io
+    dataPropertyOrder:
+      "&":
+        - image
+        - registry_host
+        - registry_auth_host
+      "&~|image":
+        - name
+        - tag
+    color: null
+    isPrivate: false
+    metaSortKey: 1650634985269
+    _type: environment
+  - _id: jar_c0a5e5bbbe009df3a9d02c5720854ef8d10465cc
+    parentId: wrk_7e298088309f49afaf59b3b7533429a6
+    modified: 1650634985270
+    created: 1650634985270
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: spc_0bf8654557c74334b7d55bd115993a42
+    parentId: wrk_7e298088309f49afaf59b3b7533429a6
+    modified: 1650634985261
+    created: 1650634985261
+    fileName: Docker Hub Ratelimit
+    contents: ""
+    contentType: yaml
+    _type: api_spec
+  - _id: env_fcd1fe1db88646d3ac9204ae67aa5a6e
+    parentId: env_c0a5e5bbbe009df3a9d02c5720854ef8d10465cc
+    modified: 1650636167557
+    created: 1650635919663
+    name: Alpine
+    data:
+      image:
+        name: alpine
+        tag: 3.8.0
+    dataPropertyOrder:
+      "&":
+        - image
+      "&~|image":
+        - name
+        - tag
+    color: null
+    isPrivate: false
+    metaSortKey: 1650635919663
+    _type: environment
+  - _id: env_17faf1f8e75f4b83b37e804328c2dce2
+    parentId: env_c0a5e5bbbe009df3a9d02c5720854ef8d10465cc
+    modified: 1650636461379
+    created: 1650636447617
+    name: Default
+    data:
+      image:
+        name: ratelimitpreview
+        tag: test
+    dataPropertyOrder:
+      "&":
+        - image
+      "&~|image":
+        - name
+        - tag
+    color: null
+    isPrivate: false
+    metaSortKey: 1650636447617
+    _type: environment
