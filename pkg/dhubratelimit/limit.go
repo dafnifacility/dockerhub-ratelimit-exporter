@@ -147,6 +147,12 @@ func (rlc *Checker) Check(ctx context.Context) (lim Result, err error) {
 		res.PullLimit, window = splitRatelimitHeader(ll)
 	}
 	res.Window = time.Duration(window * int(time.Second))
+
+	log.WithFields(log.Fields{
+		"ratelimit-remaining": res.PullRemaining,
+		"ratelimit-limit":     res.PullLimit,
+		"window":              res.Window,
+	}).Info("updated ratelimit from docker.io")
 	if rlc.HasCredentials() {
 		return &AuthResult{
 			InnerResult: res,
